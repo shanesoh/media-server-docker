@@ -1,0 +1,79 @@
+version: "2"
+services:
+    bit:
+        image: linuxserver/transmission
+        restart: always
+        ports:
+                - "9091:9091"
+                - "51413:51413"
+                - "51413:51413/udp"
+        volumes:
+                - ${USERDIR}/config/transmission:/config
+                - ${USERDIR}/media/downloads:/downloads
+                - ${USERDIR}/media/watch:/watch
+        environment:
+                - PUID=${PUID}
+                - PGID=${PGID}
+                - TZ=${TZ}
+
+    sonarr:
+        image: linuxserver/sonarr
+        restart: always
+        depends_on:
+                - bit
+                - jackett
+        ports:
+                - "8989:8989"
+        volumes:
+                - ${USERDIR}/config/sonarr:/config
+                - ${USERDIR}/media/downloads:/downloads
+                - ${USERDIR}/media/tv:/tv
+        environment:
+                - PUID=${PUID}
+                - PGID=${PGID}
+                - TZ=${TZ}
+
+    radarr:
+        image: linuxserver/radarr
+        restart: always
+        depends_on:
+                - bit
+                - jackett
+        ports:
+                - "7878:7878"
+        volumes:
+                - ${USERDIR}/config/radarr:/config
+                - ${USERDIR}/media/downloads:/downloads
+                - ${USERDIR}/media/movies:/movies
+        environment:
+                - PUID=${PUID}
+                - PGID=${PGID}
+                - TZ=${TZ}
+
+    jackett:
+        image: linuxserver/jackett
+        restart: always
+        ports:
+                - "9117:9117"
+        volumes:
+                - ${USERDIR}/config/jackett:/config
+        environment:
+                - PUID=${PUID}
+                - PGID=${PGID}
+                - TZ=${TZ}
+
+    emby:
+        image: dperson/emby
+        restart: always
+        ports:
+                - "8096:8096"
+        expose:
+                - "7359/udp"
+                - "1900/udp"
+        volumes:
+                - ${USERDIR}/config/emby:/config
+                - ${USERDIR}/media/movies:/media/movies
+                - ${USERDIR}/media/tv:/media/tv
+        environment:
+                - USERID=${PUID}
+                - GROUPID=${PGID}

@@ -1,0 +1,14 @@
+myawesomehomeserver.duckdns.org {
+gzip
+proxy /emby emby:8096 {
+        transparent
+        }
+
+proxy /sonarr sonarr:8989 {
+        transparent
+        }
+
+proxy /radarr radarr:7878 {
+        transparent
+        }
+}
